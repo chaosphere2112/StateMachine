@@ -1,35 +1,39 @@
 package state
 
-type StateTarget interface {
+const (
+	FinishedState = -1
+)
+
+type StateMachine interface {
+	TakeData(data byte, state int) (string, int)
+	Done()
 }
 
-type StateMachine struct {
-	Target       StateTarget
-	States       []func(*StateTarget, byte) (string, int)
+type StateEngine struct {
+	Machine      StateMachine
 	Output       []string
 	CurrentState int
 }
 
-func (machine *StateMachine) AddState(state func(*StateTarget, byte) (string, int)) {
-
-	machine.States = append(machine.States, state)
-
-}
-
-func (machine *StateMachine) ConsumeByte(data byte) {
+func (engine *StateEngine) ConsumeByte(data byte) {
 
 	var result string
 
-	result, machine.CurrentState = machine.States[machine.CurrentState](machine.target, data)
+	result, engine.CurrentState = engine.Machine.TakeData(data, engine.CurrentState)
 
 	if result != "" {
-		machine.Output = append(machine.Output, result)
+		engine.Output = append(engine.Output, result)
+	}
+
+	if engine.CurrentState == FinishedState {
+		engine.Machine.Done()
+		engine.CurrentState = 0
 	}
 
 }
 
-func (machine *StateMachine) ConsumeBytes(data []byte) {
+func (engine *StateEngine) ConsumeBytes(data []byte) {
 	for _, data_byte := range data {
-		machine.ConsumeByte(data_byte)
+		engine.ConsumeByte(data_byte)
 	}
 }

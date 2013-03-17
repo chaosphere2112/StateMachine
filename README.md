@@ -3,15 +3,20 @@ StateMachine
 
 Golang implementation of a simple state machine
     
+    package main
+
     import (
         "fmt"
+        "bytes"
         "github.com/chaosphere2112/StateMachine"
     )
 
     func MyFunc(data byte) (string, int) {
-        return append("",byte), 0     
+        var byteslice bytes.Buffer
+        byteslice.WriteByte(data)
+        return byteslice.String(), 0
     }
-    
+
     func main() {
 
         stringbuilder := new(state.StateMachine)

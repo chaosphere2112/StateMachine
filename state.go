@@ -4,13 +4,13 @@ type StateTarget interface {
 }
 
 type StateMachine struct {
-	target       StateTarget
-	States       []func(StateTarget, byte) (string, int)
+	Target       StateTarget
+	States       []func(*StateTarget, byte) (string, int)
 	Output       []string
 	CurrentState int
 }
 
-func (machine *StateMachine) AddState(state func(StateTarget, byte) (string, int)) {
+func (machine *StateMachine) AddState(state func(*StateTarget, byte) (string, int)) {
 
 	machine.States = append(machine.States, state)
 
